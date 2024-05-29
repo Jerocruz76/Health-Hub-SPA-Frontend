@@ -12,7 +12,7 @@ export async function LoginFormComponent() {
     <div class="${style.body}">
       <video id="backgroundVideo" autoplay muted loop class="${style.videoBackground}">
         <source src="${video}" type="video/mp4">
-        Your browser does not support the video tag.
+        Your browser does not support the video tag. 
       </video>
       <div class="${style.overlay}"></div>
       <div class="${style.container1}">
@@ -57,10 +57,11 @@ export async function LoginFormComponent() {
       return;
     }
 
-    const token = await login(email, password);
+    const [token,role] = await login(email, password);
 
     if (token) {
       localStorage.setItem('token', token);
+      localStorage.setItem('rol', role);
       navigateTo('/dashboard');
     } else {
       alert('Invalid credentials');
@@ -78,8 +79,10 @@ async function login(email, password) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password,}),
     });
+
+    console.log(response);
 
     if (!response.ok) {
       const errorMessage = await response.text();
@@ -88,9 +91,11 @@ async function login(email, password) {
 
     const data = await response.json();
     console.log(`This is the token: ${data.token}`);
-    return data.token;
+    console.log(data.role)
+    return [data.token,data.role];
   } catch (error) {
     console.error('Login failed:', error);
     return null;
   }
 }
+
